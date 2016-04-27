@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<connection user="EXLTSBL" pass="EXLTSBL" host="ldsvcrsbd07.cl.lan.com" port="1546" db="comopa" >
+</connection>

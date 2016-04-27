@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.latam.vta.sbl.persistence.services.AccountsMapper">
+
+	<resultMap id="AccountCoreMap" type="com.latam.vta.sbl.domain.Account">
+		<result property="accCd" 			column="ACCNTS_CD" />
+		<result property="accValCountries" 	column="ACCNTS_VAL_COUNTRIES" />
+		<result property="accName" 			column="ACCNTS_NAME" />
+		<result property="accSts" 			column="ACCNTS_STS" />
+		<result property="accFlgNego" 		column="ACCNTS_FLG_NEGO" />
+		<result property="accFlgBsg" 		column="ACCNTS_FLG_BSG" />
+		<result property="accFlgGmt" 		column="ACCNTS_FLG_GMT" />
+	</resultMap>
+
+	<select id="list" resultMap="AccountCoreMap">
+		SELECT 
+			ACCNTS_CD,
+			ACCNTS_VAL_COUNTRIES,
+			ACCNTS_NAME,
+			ACCNTS_STS,
+			ACCNTS_FLG_NEGO,
+			ACCNTS_FLG_BSG,
+			ACCNTS_FLG_GMT
+		from ACCNTS
+		ORDER BY ACCNTS_STS DESC
+	</select>
+
+	<select id="get" parameterType="String" resultMap="AccountCoreMap">
+		SELECT 
+			ACCNTS_CD,
+			ACCNTS_VAL_COUNTRIES,
+			ACCNTS_NAME,
+			ACCNTS_STS,
+			ACCNTS_FLG_NEGO,
+			ACCNTS_FLG_BSG,
+			ACCNTS_FLG_GMT
+		from ACCNTS
+		where ACCNTS.ACCNTS_NAME = #{accName:VARCHAR}
+	</select>
+	
+	<select id="getById" parameterType="Integer" resultMap="AccountCoreMap">
+		SELECT 
+			ACCNTS_CD,
+			ACCNTS_VAL_COUNTRIES,
+			ACCNTS_NAME,
+			ACCNTS_STS,
+			ACCNTS_FLG_NEGO,
+			ACCNTS_FLG_BSG,
+			ACCNTS_FLG_GMT
+		from ACCNTS
+		where ACCNTS.ACCNTS_CD = #{accCd:VARCHAR}
+	</select>
+
+	<select id="getByType" parameterType="com.latam.vta.sbl.domain.Account" resultMap="AccountCoreMap">
+		SELECT 
+			ACCNTS_CD,
+			ACCNTS_VAL_COUNTRIES,
+			ACCNTS_NAME,
+			ACCNTS_STS,
+			ACCNTS_FLG_NEGO,
+			ACCNTS_FLG_BSG,
+			ACCNTS_FLG_GMT
+		from ACCNTS
+		<if test="accFlgNego==1" >
+			where ACCNTS_FLG_NEGO = '1'
+		</if>
+		<if test="accFlgBsg==1" >
+			where ACCNTS_FLG_BSG = '1'
+		</if>
+		<if test="accFlgGmt==1" >
+			where ACCNTS_FLG_GMT = '1'
+		</if>
+		<if test="accSts!=null">
+			and ACCNTS_STS=#{accSts:VARCHAR}
+		</if>
+		ORDER BY ACCNTS_STS DESC
+	</select>
+
+	<select id="getByPos" parameterType="com.latam.vta.sbl.domain.Account" resultMap="AccountCoreMap">
+		SELECT
+			ACCNTS_CD,
+			ACCNTS_VAL_COUNTRIES,
+			ACCNTS_NAME,
+			ACCNTS_STS,
+			ACCNTS_FLG_NEGO,
+			ACCNTS_FLG_BSG,
+			ACCNTS_FLG_GMT
+		FROM ACCNTS
+		WHERE 
+			UPPER(ACCNTS_NAME) like #{accName:VARCHAR}
+			AND UPPER(ACCNTS_VAL_COUNTRIES) like #{accValCountries:VARCHAR}
+		ORDER BY ACCNTS_STS DESC
+	</select>
+	
+	<select id="valAccountProduct" parameterType="com.latam.vta.sbl.domain.Account" resultType="Integer">
+		SELECT
+		    COUNT(ACCNTS_NAME)
+		FROM ACCNTS
+		<if test="accFlgNego==1" >
+			where ACCNTS_FLG_NEGO = '1'
+		</if>
+		<if test="accFlgBsg==1" >
+			where ACCNTS_FLG_BSG = '1'
+		</if>
+		<if test="accFlgGmt==1" >
+			where ACCNTS_FLG_GMT = '1'
+		</if>
+		AND ACCNTS_CD = #{accCd:VARCHAR}
+		AND ACCNTS_STS = '1'
+	</select>
+	
+	<select id="valAccountPos" parameterType="com.latam.vta.sbl.domain.Account" resultType="Integer">
+		SELECT
+		    COUNT(ACCNTS_NAME)
+		FROM ACCNTS
+			where ACCNTS_VAL_COUNTRIES like #{accValCountries:VARCHAR}
+			AND ACCNTS_CD = #{accCd:VARCHAR}
+	</select>
+
+	<select id="list" resultMap="BlockSpaceEventMap">
+		SELECT
+			BLKEVN_CD,
+			BLKSPC_CD,
+			BLKEVN_STS,
+			BLKEVN_DTTM_PROCESS,
+			BLKEVN_TXT_COMMENT,
+			BLKEVN_CD_BP
+		from BLKEVN
+	</select>
+
+	<select id="get" parameterType="int" resultMap="BlockSpaceEventMap">
+		SELECT 
+			BLKEVN_CD,
+			BLKSPC_CD,
+			BLKEVN_STS,
+			BLKEVN_DTTM_PROCESS,
+			BLKEVN_TXT_COMMENT,
+			BLKEVN_CD_BP
+		from BLKEVN
+		where
+		BLKEVN.BLKEVN_CD = #{bevCd}
+	</select>
+	
+	<select id="getLast" parameterType="int" resultMap="BlockSpaceEventMap">
+		SELECT 
+            BLKEVN_CD,
+            BLKSPC_CD,
+            BLKEVN_STS,
+            BLKEVN_DTTM_PROCESS,
+            BLKEVN_TXT_COMMENT,
+            BLKEVN_CD_BP
+        from BLKEVN
+        where
+        BLKEVN_CD =(SELECT 
+               MAX(BLKEVN.BLKEVN_CD)
+               FROM BLKEVN 
+            WHERE
+            BLKEVN.BLKSPC_CD = #{param1:INTEGER})
+	</select>
+
+	<select id="getEventHistory" parameterType="Integer" resultMap="BlockSpaceEventMap">
+	SELECT 
+           BLKEVN.BLKEVN_CD
+           ,BLKEVN.BLKEVN_CD_BP
+           ,BLKEVN.BLKEVN_TXT_COMMENT
+           ,BLKEVN.BLKEVN_STS
+           ,BLKEVN_DTTM_PROCESS
+
+     FROM BLKEVN
+        
+     WHERE BLKEVN.BLKSPC_CD =#{param1:INTEGER}
+
+	</select>
+
+
+	<insert id="insert" parameterType="com.latam.vta.sbl.domain.Account">
+		<selectKey keyProperty="accCd" resultType="Integer" order="BEFORE">
+			select ACCNTS_SEQ_CD.nextval from dual
+		</selectKey>
+		insert into ACCNTS
+			(
+			ACCNTS_CD,
+			ACCNTS_VAL_COUNTRIES,
+			ACCNTS_NAME,
+			ACCNTS_STS,
+			ACCNTS_FLG_NEGO,
+			ACCNTS_FLG_BSG,
+			ACCNTS_FLG_GMT
+			)
+		values 
+			(
+			#{accCd:INTEGER},
+			#{accValCountries:VARCHAR},
+			#{accName:VARCHAR},
+			#{accSts:VARCHAR},
+			#{accFlgNego:VARCHAR},
+			#{accFlgBsg:VARCHAR},
+			#{accFlgGmt:VARCHAR}
+			)
+	</insert>
+
+	<update id="update" parameterType="com.latam.vta.sbl.domain.Account">
+		update ACCNTS set
+			ACCNTS_VAL_COUNTRIES = #{accValCountries:VARCHAR},
+			ACCNTS_NAME = #{accName:VARCHAR},
+			ACCNTS_STS = #{accSts:VARCHAR},
+			ACCNTS_FLG_NEGO = #{accFlgNego:VARCHAR},
+			ACCNTS_FLG_BSG = #{accFlgBsg:VARCHAR},
+			ACCNTS_FLG_GMT = #{accFlgGmt:VARCHAR}
+		where ACCNTS_CD = #{accCd:INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="com.latam.vta.sbl.domain.Account">
+		delete from ACCNTS
+		where
+		ACCNTS_CD = #{accCd:INTEGER}
+	</delete>
+</mapper>
